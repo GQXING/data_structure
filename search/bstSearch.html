@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>二分查找</title>
+		<script type="text/javascript" src="../../js/jquery-3.3.1.min.js" ></script>
+		<style>
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1300px;
+				height:880px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1400;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 16px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1286px;
+				height: 750px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+    			margin-top: 10px;
+    			padding-top: 10px;
+
+			}
+			#operation{
+				width:250px;
+				margin: auto;
+				height: 60px;
+				padding-top: 15px;
+				padding-bottom: 15px;
+			}
+			#randNum{
+				width: 560px;
+				margin: auto;
+				height: 30px;
+			}
+			#allBar li{
+				float: left;
+				width: 40px;
+				height: 30px;
+				list-style: none;
+				margin-left: 15px;
+				background: #E7E5DC;
+				line-height: 30px;
+				text-align: center;
+				font-size: 16px;
+			}
+			#showDp{
+				width: 1284px;
+				margin: auto;
+				height: 680px;
+				margin-top: 10px;
+			}
+			#allNode .barLi{
+				float: left;
+				width: 50px;
+				height: 35px;
+				list-style: none;
+				background: #E7E5DC;
+				line-height: 35px;
+				text-align: center;
+				font-size: 18px;
+			}
+			#allNode .lineLi{
+				float: left;
+				width: 40px;
+				border: 4px;
+				height: 4px;
+				list-style: none;
+				background: #E7E5DC;
+				text-align: center;
+				margin-top: 16px;
+				transition:  0.5s;
+				-moz-transition: 0.5s; /* Firefox 4 */
+				-webkit-transition:0.5s; /* Safari 和 Chrome */ 
+				-o-transition: 0.5s; /* Opera */
+			}
+			#showDp h1{
+				color: white;
+				text-align: center;
+			}
+			#showIndex{
+				color: white;
+				font-size: 30px;
+				width: 1284px;
+				height: 680px;
+				border: 1px black solid;
+			}
+			.ulClass{
+				width: 1380;
+				height: 40px;
+			}
+			.lineLi{
+				list-style: none;
+				height: 40px;
+				float: left;
+			}
+			.numLi{
+				list-style: none;
+				width: 40px;
+				height: 40px;
+				float: left;
+			}
+			.canvasList{
+				border: none;
+			}
+			.valLi{
+				list-style: none;
+				width: 38px;
+				height: 38px;
+				float: left;
+				border: 1px solid black;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>动态实现二叉搜索树查找过程</h1></center>
+				<input type="button" id="getNum" value="随机产生7个数" />
+				<input type="button" id="createTree" value="创建搜索树" />
+				<input type="text" id="inValue"/> 
+				<input type="button" id="searchBtn" value="查找" />
+			</div>
+			<div class="barGraph">
+				
+				<div id="randNum">
+					<ul id="allBar">
+					</ul>
+				</div>
+				
+				<div id="showDp">
+					<center id="showIndex"></center>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+		var bar=document.getElementById('allBar');
+		var arr=bar.getElementsByTagName("li");
+		var allNode=document.getElementById('allNode');
+		document.getElementById('getNum').onclick=function(){
+			bar.innerHTML='';
+			//为使数据表现的更加明显，对随机数做特殊处理
+			var at=[0,0,0,0,0,0,0];
+			var btn=true;
+			while(btn){
+				for (var i = 0; i < 7; i++) 
+					at[i]=parseInt(Math.random()*99+1);
+				var ctn1=0,ctn2=0;
+				for (var i = 1; i < 7; i++) {
+					if(at[i]>at[0])
+						ctn1++;
+					else
+						ctn2++;
+				}
+				console.log(ctn1+" "+ctn2);
+				if(ctn1>3 || ctn2>3)
+					btn=true;
+				else
+					btn=false;
+			}
+			
+			for (var i = 0; i < 7; i++) {
+				var strHtml='<li class="barLi" id="bar_'+i+'" style="left:'+(60*i+80)+'px;">'
+				+at[i]+'</li>';
+				bar.innerHTML += strHtml;
+			}
+		}
+		
+		function init(){
+			var innerDiv=document.getElementById('showIndex');
+			var str='';
+			for (var i = 0; i < 14; i++) {
+				str+='<ul class="ulClass" id="ul_'+i+'" >';
+				if(i%2==0){
+					for (var j = 0; j < 32; j++) {
+						str+='<li class="numLi" id="num_'+i+'_'+j+'"'+'></li>';
+					}
+				}else{
+					
+					for (var k = 0; k < Math.pow(2,(i+1)/2); k++) {
+						var wd=1280/Math.pow(2,(i+1)/2)-2;
+						str+='<li class="lineLi" style="width:'+wd+'px" id="line_'+i+'_'+k+'"'+'>'+
+						'<canvas class="canvasList" id="canvas_'+i+'_'+k+'"'+' width="'+wd+'" height="40"></canvas>'
+						+'</li>';
+					}	
+				}
+				str+='</ul>';
+			}
+			innerDiv.innerHTML=str;
+		}
+		
+		init();
+		
+		'use strict';
+		//二叉排序树的建立
+		class BinaryTree {
+		    // 初始化树
+		    constructor () {
+		        this.root = null;
+		        this.result_array = [];
+		    }
+		
+		    /**
+		     * @description 节点对象
+		     * @param {string/number}     order     节点的权值
+		     * @param {any}             value     节点的值
+		     * @return {object}                 节点对象
+		     */
+		    Node (order, value) {
+		        return {
+		            order: order,    //节点的权值
+		            value: value || order,    //节点的值
+		            left: null,    //左孩子节点
+		            right: null,    //右孩子节点
+		        }
+		    }
+		
+		    /**
+		     * @description 递归插入节点
+		     * @param       {object(Node)}                 node     原节点
+		     * @param       {object(Node)}                 new_node 新插入的节点
+		     */
+		    insertNode(node, new_node) {
+		        // 新节点的权值小于原节点则递归插入左孩子
+		        if(new_node.order < node.order){
+		            if(!node.left){
+		                node.left = new_node;
+		            }else{
+		                this.insertNode(node.left, new_node);
+		            }
+		        // 新节点的权值不小于原节点则递归插入右孩子
+		        }else{
+		            if(!node.right){
+		                node.right = new_node;
+		            }else{
+		                this.insertNode(node.right, new_node);
+		            }
+		        }
+		    }
+		    
+		    /**
+		     * @description 执行插入节点（此方法供外部调用）
+		     * @param       {string/number}                 order 要插入节点的权值
+		     * @param       {object(Node)}                     node  要插入的节点
+		     */
+		    insert(order, node) {
+		        var new_node = this.Node(order, node);
+		        if(!this.root){
+		            this.root = new_node;
+		        }else{
+		            this.insertNode(this.root, new_node)
+		        }
+		    }
+		
+		}
+		
+		/**
+		     * @description 递归先序遍历
+		     * @param       {object(Node)}           node     要递归的节点
+		     * @param       {Function}               callback 回调
+		     */
+		    function levelOrder(T) {
+		    	var front=rear=0,last=1;
+		    	var t=[null, null, null, null, null, null,null];
+		    	var level=0;
+		    	t[rear++]=T;
+		    	var way=[0,0,0,0,0,0,0],finishLine=[0,0,0,0,0,0,0];	//划线辅助
+		    	var low=[0,0,0,0,0,0,0],high=[31,0,0,0,0,0,0];
+		    	var ctn=0;
+		    	while(front<rear){
+		    		var x=t[front++];
+		    		var str='ul_'+level*2;
+		    		var oLi=document.getElementById(str).getElementsByTagName("*");
+		    		var mid=parseInt((low[front-1]+high[front-1])/2);
+		    		console.log(mid);
+		    		if(front!=1 && way[front-1]==0 ){
+		    			var dist=Math.pow(2,level);
+		    			var pos=parseInt(mid/(31/dist));
+		    			var c = document.getElementById("canvas_"+(level*2-1)+"_"+pos);
+						var cxt = c.getContext("2d");
+						cxt.beginPath();
+						var end=1280/Math.pow(2,level);
+						cxt.moveTo(end/2,40);
+						cxt.lineTo(end-40,0);
+						cxt.stroke();
+		    		}
+		    		if(front!=1 && way[front-1]==1 ){
+		    			var dist=Math.pow(2,level);
+		    			var pos=parseInt(mid/(31/dist));
+		    			var c = document.getElementById("canvas_"+(level*2-1)+"_"+pos);
+						var cxt = c.getContext("2d");
+						cxt.beginPath();
+						var end=1280/Math.pow(2,level);
+						cxt.moveTo(end/2,40);
+						cxt.lineTo(0,0);
+						cxt.stroke();
+		    		}
+		    		oLi[mid].innerText=x.value;
+		    		
+		    		oLi[mid].className='valLi';
+		    		if(x.left){
+		    			low[rear]=low[front-1];
+		    			high[rear]=mid-1;
+		    			way[rear]=0;
+		    			t[rear++]=x.left;
+		    		}
+		    		if(x.right){
+		    			low[rear]=mid+1;
+		    			high[rear]=high[front-1];
+		    			way[rear]=1;
+		    			t[rear++]=x.right;
+		    		}
+		    		ctn=ctn+2;
+		    		if(last==front){
+		    			level++;
+		    			last=rear;
+		    			ctn=0;
+		    		}
+		    	}
+		    }
+		
+		let tree;
+		document.getElementById('createTree').onclick=function(){
+			init();
+			var numLi=bar.getElementsByTagName("li");
+			 tree= new BinaryTree();
+			var a=[0,0,0,0,0,0,0];
+			for (var i = 0; i < numLi.length; i++) {
+				a[i]=parseInt(numLi[i].innerText);
+			}
+			a.forEach(item => {
+			　　tree.insert(item);
+			});
+		　　
+			levelOrder(tree.root);
+		}
+		
+		
+		var step=[-1,-1,-1,-1,-1,-1,-1];
+		var s=[-1,-1,-1,-1,-1,-1,-1];
+		function search(x,value){
+			var i=0;
+			for( i=0 ; x != null ; i++ ){
+				var sLi=document.getElementById('ul_'+i*2).getElementsByTagName("*");
+				var j=0;
+				for (; j < sLi.length; j++) {
+					if(sLi[j].innerText==x.value)
+						break;
+				}
+				step[i]=j;
+				if(x.value==value){
+					s[i]=1;//成功匹配
+					break;
+				}else if(x.value<value){
+					x=x.right;
+					s[i]=0;
+					console.log(s[i]);
+				}else{
+					x=x.left;
+					s[i]=0;
+				}
+			}
+			if(x==null){
+				s[i+1]=-1;
+			}
+		}
+		
+		function action(i){
+			setTimeout(function(){
+				var sLi=document.getElementById('ul_'+i*2).getElementsByTagName("*");
+				if(s[i]==1){
+					sLi[step[i]].style.background='#05D400';
+				}else if(s[i]==0){
+					sLi[step[i]].style.background='orange';
+				}else if(s[i]==-1){
+					alert('No key in the series!');
+				}
+			},1000*i);
+		}
+		
+		function showMove(){
+			var btn=true;
+			for (var i = 0; i < step.length && btn ; i++) {
+				action(i);
+				if(s[i]==1 || s[i]==-1)
+					btn=false;
+				
+			}
+		}
+		document.getElementById('searchBtn').onclick=function(){
+			s=[-1,-1,-1,-1,-1,-1,-1];
+			step=[-1,-1,-1,-1,-1,-1,-1];
+			var inVal=parseInt(document.getElementById('inValue').value);
+			var x=tree.root;
+			search(x,inVal);
+			showMove();
+		}
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1200px;
+				height:550px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1200px;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 10px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1100px;
+				height: 400px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+			}
+			#allBar{
+				padding-left: 100px;
+			}
+			#allBar li{
+				float: left;  
+                position: absolute;  
+                bottom: 0px;
+                list-style: none;
+                background: olivedrab;
+                text-align: center;
+                width: 40px;
+                transition:  0.5s;
+				-moz-transition: 0.5s; /* Firefox 4 */
+				-webkit-transition:0.5s; /* Safari 和 Chrome */ 
+				-o-transition: 0.5s; /* Opera */
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>动态实现快速排序</h1></center>
+				<input type="button" id="getNum" value="随机产生10组" />
+				<input type="button" id="deleteLeft" value="左边删除一组" />
+				<input type="button" id="deleteRight" value="右边删除一组" />
+				<input type="button" id="sortBar" value="执行" />
+			</div>
+			<div class="barGraph">
+				<ul id="allBar"></ul>
+			</div>
+		</div>
+		<script type="text/javascript">
+		
+			//获取class类选择器
+			function getClassName(parent, cls) {
+			    var all = parent.getElementsByTagName("*");
+			    var all = [];
+			    for (var i = 0; i < all.length; i++) {
+			        if (all[i].className == cls) {
+			            all.push(all[i]);
+			        }
+			    }
+			    return all;
+			}
+			
+			var bar=document.getElementById('allBar');
+			//随机产生10组数据
+			document.getElementById('getNum').onclick=function(){
+				bar.innerHTML='';
+				for (var i = 0; i < 10; i++) {
+					var randX=parseInt(Math.random()*80+20);
+					var strHtml='<li class="barLi" id="bar_'+i+'" style="height:' 
+					+ randX*4 + 'px;left:'+(70*i+200)+'px;">'+randX+'</li>';
+					bar.innerHTML += strHtml;
+				}
+			}
+			//左侧删除一组数据
+			document.getElementById('deleteLeft').onclick=function(){
+				var length=bar.childNodes.length;
+				if( length>1 )
+					bar.removeChild(bar.childNodes[0]);
+				else
+					alert("你已经将数据全部删除了，请重新生成数据。");
+			}
+			//右侧删除一组数据
+			document.getElementById('deleteRight').onclick=function(){
+				var length=bar.childNodes.length;
+				if( length>1 )
+					bar.removeChild(bar.childNodes[length-1]);
+				else
+					alert("你已经将数据全部删除了，请重新生成数据。");
+			}
+			
+			//排序效果
+			document.getElementById('sortBar').onclick=function(){
+				var n=bar.childNodes.length;
+				if(n==0){
+					alert("请先生成一组数字！");
+					return;
+				}
+				var all = bar.getElementsByTagName("*");
+				
+				function partion(low,high){
+					var temp=all[low].innerText;
+					while(low<high){
+						while(low<high && all[high].innerText>=temp)
+							high--;
+						all[low].innerText=all[high].innerText;
+						all[low].style.height=all[high].innerText*4+'px';
+						while(low<high && all[low].innerText<=temp)
+							low++;
+						all[high].innerText=all[low].innerText;
+						all[high].style.height=all[low].innerText*4+'px';
+					}
+					all[low].innerText=temp;
+					all[low].style.height=temp*4+'px';
+					all[low].style.background='orange';
+					return low;
+				}
+				var i=0;
+				function quickSort(low,high){
+					i++;
+					if(low<high){
+						setTimeout(function(){
+							var pivotpos=partion(low,high);
+							quickSort(low,pivotpos-1);
+							quickSort(pivotpos+1,high);	
+						},1000*i);
+					}
+				}
+				quickSort(0,n-1);
+			}
+		</script>
+	</body>
+</html>

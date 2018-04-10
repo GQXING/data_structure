@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>datastruct</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			#navBar{
+				margin: auto;
+				width: 1200px;
+				height: 60px;
+				background: #333333;
+			}
+			#navBar ul{
+				width:1000px;
+				margin: auto;
+				margin-top: 10px;
+			}
+			#navBar li{
+				width: 200px;
+				float: left;
+				text-align: center;
+				height: 60px;
+				line-height: 60px;
+				color: white;
+				list-style: none;
+				font-size: 20px;
+			}
+			#navBar li:hover{
+				background: orange;
+				color: white;
+			}
+			#menu{
+				width: 1200px;
+				margin: auto;
+			}
+			#menu div{
+				margin: auto;
+				margin-top: 10px;
+				width: 1200px;
+				height: 50px;
+				background: #333333;
+				float: left;
+				display: none;
+				z-index: 2000;
+			}
+			#menu ul li{
+				float: left;
+				width: 240px;
+				height: 50px;
+				line-height: 50px;
+				text-align: center;
+				list-style: none;
+				color: white;
+				font-size: 18px;
+				z-index: 200;
+			}
+			#menu ul li a{
+				text-decoration: none;
+			
+			}
+			#menu ul li:hover{
+				background: orange;
+			}
+			#name ul li .list{
+				height: 55px;
+			}
+		</style>
+	</head>
+	<body>
+		<nav id="navBar">
+			<ul>
+				<li>排 序</li>
+				<li>查 找</li>
+				<li>链 表</li>
+				<li> 树  </li>
+				<li> 图  </li>
+			</ul>
+		</nav>
+		
+		<div id="menu">
+			<!--function of sort-->
+			<div>
+				<ul>
+                    <a href="https://gqxing.github.io/datastruct/sort/bubbleSort.html">
+                        <li>冒泡排序</li>
+                    </a>
+                    <a href="https://gqxing.github.io/datastruct/sort/insertSort.html">
+                        <li>插入排序</li>
+                    </a>
+                    <a href="https://gqxing.github.io/datastruct/sort/quickSort.html">
+                        <li>快速排序</li>
+                    </a>
+                    <a href="https://gqxing.github.io/datastruct/sort/selectSort.html">
+                        <li>选择排序</li>
+                    </a>
+                    <a href="https://gqxing.github.io/datastruct/sort/mergeSort.html">
+                        <li>合并排序</li>
+                    </a>
+                </ul>
+			</div>
+			<!--function of searching-->
+			<div>
+				<ul>
+                    <a href="https://gqxing.github.io/datastruct/search/sequentialSearch.html">
+                        <li>顺序查找</li>
+                    </a>
+                    <a href="https://gqxing.github.io/datastruct/search/binarySearch.html">
+                        <li>二分查找</li>
+                    </a>
+                    <a href="https://gqxing.github.io/datastruct/search/bstSearch.html">
+                        <li>排序二叉树查找</li>
+                    </a>
+                    <a href="https://gqxing.github.io/datastruct/sort/selectSort.html">
+                        <li>选择排序</li>
+                    </a>
+                    <a href="https://gqxing.github.io/datastruct/sort/mergeSort.html">
+                        <li>合并排序</li>
+                    </a>
+                </ul>
+			</div>
+			<!--function of link-->
+			<div>
+				<ul>
+                    <a href="https://gqxing.github.io/datastruct/linkList/link.html">
+                        <li>链表操作</li>
+                    </a>
+                    
+                </ul>
+			</div>
+                
+         </div>
+		
+		<script>
+			var bar =document.getElementById('navBar');
+		    var all = bar.getElementsByTagName("li");
+		    var oMenu=document.getElementById('menu');
+		    var oDiv=oMenu.getElementsByTagName("div");
+		    var n=all.length;
+		    var m=oDiv.length;
+//		    var timer;
+		    for (var i = 0; i < n; i++) {
+		    	all[i].index=i;
+		    	all[i].onmouseover=function(){
+		    		for (var i = 0; i < m; i++) {
+		    			oDiv[i].style.display='none';
+		    		}
+		    		oDiv[this.index].style.display='block';
+		    	}
+		
+				all[i].onmouseout=function(){
+					var aIndex=this.index;
+					timer=setTimeout(function(){
+			        oDiv[aIndex].style.display='none';
+					}, 1000);
+				}
+		    }
+		    
+		    for (var i = 0; i < m; i++) {
+		    	oDiv[i].index=i;
+		    	oDiv[i].onmouseover=function(){
+					clearTimeout(timer);
+				}
+
+				oDiv[i].onmouseout=function(){
+					var bIndex=this.index;
+					timer=setTimeout(function(){
+			        oDiv[bIndex].style.display='none';
+					}, 50);
+				} 
+				
+		    }
+		  
+		    
+		    
+		    
+		    
+		    /*
+		    var menu=document.getElementById('menu');
+			var omore=document.getElementById('more');
+			//添加导航栏更多对应的js效果
+			omore.onmouseover=function(){
+				menu.style.display='block';
+			}
+			
+			omore.onmouseout=function(){
+					timer=setTimeout(function(){
+			        menu.style.display='none';
+					}, 600);
+				} 
+			
+			menu.onmouseover=function(){
+				
+					clearTimeout(timer);
+			        //menu.style.display='block';	
+			}
+			menu.onmouseout=function(){
+					timer=setTimeout(function(){
+			        menu.style.display='none';
+					}, 22);
+			}
+			*/
+		</script>
+	</body>
+</html>

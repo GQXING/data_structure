@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>冒泡排序</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1200px;
+				height:550px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1200px;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 10px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1100px;
+				height: 400px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+			}
+			#allBar{
+				padding-left: 100px;
+			}
+			#allBar li{
+				float: left;  
+                position: absolute;  
+                bottom: 0px;
+                list-style: none;
+                background: olivedrab;
+                text-align: center;
+                width: 40px;
+                transition:  0.5s;
+				-moz-transition: 0.5s; /* Firefox 4 */
+				-webkit-transition:0.5s; /* Safari 和 Chrome */ 
+				-o-transition: 0.5s; /* Opera */
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>动态实现冒泡排序</h1></center>
+				<input type="button" id="getNum" value="随机产生10组" />
+				<input type="button" id="deleteLeft" value="左边删除一组" />
+				<input type="button" id="deleteRight" value="右边删除一组" />
+				<input type="button" id="sortBar" value="冒泡排序" />
+			</div>
+			<div class="barGraph">
+				<ul id="allBar"></ul>
+			</div>
+		</div>
+		<script type="text/javascript">
+		
+			//获取class类选择器
+			function getClassName(parent, cls) {
+			    var all = parent.getElementsByTagName("*");
+			    var arr = [];
+			    for (var i = 0; i < all.length; i++) {
+			        if (all[i].className == cls) {
+			            arr.push(all[i]);
+			        }
+			    }
+			    return arr;
+			}
+			
+			var bar=document.getElementById('allBar');
+			//随机产生50组数据
+			document.getElementById('getNum').onclick=function(){
+				bar.innerHTML='';
+				for (var i = 0; i < 10; i++) {
+					var randX=parseInt(Math.random()*80+20);
+					var strHtml='<li class="barLi" id="bar_'+i+'" style="height:' 
+					+ randX*4 + 'px;left:'+(70*i+200)+'px;">'+randX+'</li>';
+					bar.innerHTML += strHtml;
+				}
+			}
+			//左侧删除一组数据
+			document.getElementById('deleteLeft').onclick=function(){
+				var length=bar.childNodes.length;
+				if( length>1 )
+					bar.removeChild(bar.childNodes[0]);
+				else
+					alert("你已经将数据全部删除了，请重新生成数据。");
+			}
+			//右侧删除一组数据
+			document.getElementById('deleteRight').onclick=function(){
+				var length=bar.childNodes.length;
+				if( length>1 )
+					bar.removeChild(bar.childNodes[length-1]);
+				else
+					alert("你已经将数据全部删除了，请重新生成数据。");
+			}
+			
+			//排序效果
+			document.getElementById('sortBar').onclick=function(){
+				var n=bar.childNodes.length-1;
+				if(n==0){
+					alert("请先生成一组数字！");
+					return;
+				}
+				var v1,v2,str;
+				//初始化第一个排序的颜色
+				var all = bar.getElementsByTagName("*");
+				all[0].style.background='orange';
+				function change(i,j){
+					setTimeout(function(){
+						var xli=all[j];
+						var yli=all[j+1];
+						v1=xli.innerText;
+						v2=yli.innerText;
+						if(v1>v2){
+							//交换两者的值
+							xli.style.height=v2*4+'px';
+							yli.style.height=v1*4+'px';
+							xli.innerHTML=v2;
+							yli.innerHTML=v1;
+						}
+						xli.style.background='olivedrab';
+						yli.style.background='orange'
+						if(i==n-1 && j==0)
+							all[0].style.background='orange';	//最后一个附上颜色
+					},500*j);
+				}
+				
+				function round(i){
+					setTimeout(function(){
+						for (var j = 0; j<n-i; j++) 
+								change(i,j);
+					},500*((n+n-i)*i/2));	//注意时间是在29趟排序后重新开始（29+28+...+n-i）
+				}
+				
+				//setTimeout所特有的特性
+				for (var i = 0; i < n; i++)
+						round(i);
+				
+				
+			}
+			
+			
+		</script>
+	</body>
+</html>

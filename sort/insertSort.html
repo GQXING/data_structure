@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>插入排序</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1200px;
+				height:550px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1200px;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 10px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1100px;
+				height: 400px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+			}
+			#allBar{
+				padding-left: 100px;
+			}
+			#allBar li{
+				float: left;  
+                position: absolute;  
+                bottom: 0px;
+                list-style: none;
+                background: olivedrab;
+                text-align: center;
+                width: 40px;
+                transition:  0.5s;
+				-moz-transition: 0.5s; /* Firefox 4 */
+				-webkit-transition:0.5s; /* Safari 和 Chrome */ 
+				-o-transition: 0.5s; /* Opera */
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>动态实现插入排序</h1></center>
+				<input type="button" id="getNum" value="随机产生10组" />
+				<input type="button" id="deleteLeft" value="左边删除一组" />
+				<input type="button" id="deleteRight" value="右边删除一组" />
+				<input type="button" id="sortBar" value="执行" />
+			</div>
+			<div class="barGraph">
+				<ul id="allBar"></ul>
+			</div>
+		</div>
+		<script type="text/javascript">
+		
+			//获取class类选择器
+			function getClassName(parent, cls) {
+			    var all = parent.getElementsByTagName("*");
+			    var arr = [];
+			    for (var i = 0; i < all.length; i++) {
+			        if (all[i].className == cls) {
+			            arr.push(all[i]);
+			        }
+			    }
+			    return arr;
+			}
+			
+			var bar=document.getElementById('allBar');
+			//随机产生10组数据
+			document.getElementById('getNum').onclick=function(){
+				bar.innerHTML='';
+				for (var i = 0; i < 10; i++) {
+					var randX=parseInt(Math.random()*80+20);
+					var strHtml='<li class="barLi" id="bar_'+i+'" style="height:' 
+					+ randX*4 + 'px;left:'+(70*i+200)+'px;">'+randX+'</li>';
+					bar.innerHTML += strHtml;
+				}
+			}
+			//左侧删除一组数据
+			document.getElementById('deleteLeft').onclick=function(){
+				var length=bar.childNodes.length;
+				if( length>1 )
+					bar.removeChild(bar.childNodes[0]);
+				else
+					alert("你已经将数据全部删除了，请重新生成数据。");
+			}
+			//右侧删除一组数据
+			document.getElementById('deleteRight').onclick=function(){
+				var length=bar.childNodes.length;
+				if( length>1 )
+					bar.removeChild(bar.childNodes[length-1]);
+				else
+					alert("你已经将数据全部删除了，请重新生成数据。");
+			}
+			
+			//排序效果
+			document.getElementById('sortBar').onclick=function(){
+				var n=bar.childNodes.length;
+				if(n==0){
+					alert("请先生成一组数字！");
+					return;
+				}
+				var v1,v2,temp,sum=0;
+				var all = bar.getElementsByTagName("*");
+				function kthSort(i){
+					//先染色
+					setTimeout(function(){
+						all[i].style.background='orange';
+					},(function(i){
+						return 2000*i-1900;
+					})(i));
+					//染色插入后的位置
+					setTimeout(function(){
+						all[i].style.background='olivedrab';
+						if(all[i-1].innerText>all[i].innerText){
+							temp=all[i].innerText;
+							for(var j=i-1; j>=0 && all[j].innerText > temp; j--){
+								all[j+1].innerText=all[j].innerText;
+								all[j+1].style.height=all[j].innerText*4+'px';	
+							}
+							all[j+1].innerText=temp;
+							all[j+1].style.height=temp*4+'px';
+							all[j+1].style.background='orange';
+						}
+					},(function(i){
+						return 2000*i-1000;
+					})(i));
+					//恢复原色彩
+					setTimeout(function(){
+						console.log(i);
+						for(var j=i; j>=0  ; j--)
+							{
+								all[j].style.background='olivedrab';
+							}
+					},(function(i){
+						return 2000*i;
+					})(i));
+					
+				}
+				
+				for (var i = 1; i < n; i++){
+					kthSort(i);
+				}
+//				for (var i = 1; i < n; i++) 
+//					if(all[i-1].innerText>all[i].innerText){
+//						temp=all[i].innerText;
+//						console.log(temp);
+//						for(var j=i-1; j>=0 && all[j].innerText > temp; j--){
+//							all[j+1].innerText=all[j].innerText;
+//							all[j+1].style.height=all[j].innerText*2+'px';	
+//						}
+//						all[j+1].innerText=temp;
+//						all[j+1].style.height=temp*2+'px';
+//					}
+			}
+		</script>
+	</body>
+</html>
