@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>暴力匹配算法</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1300px;
+				height:550px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1250;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 16px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1250px;
+				height: 400px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+				margin-top: 5px;
+			}
+			#showDp{
+				margin-top: 10px;
+				padding-top: 30px;
+			}
+			#showIndex{
+				width: 1250px;
+				height: 300px;
+			}
+			#showIndex ul{
+				width: 1250px;
+				height: 50px;
+				margin-top: 15px;
+			}
+			#showIndex li{
+				float: left;
+				list-style: none;
+				width: 50px;
+				height: 50px;
+			}
+			.sLi{
+				float: left;
+				list-style: none;
+				width: 50px;
+				height: 50px;
+			}
+			#showIndex{
+				color: white;
+				font-size: 30px;
+			}
+			#showIndex .numLi{
+				width: 46px;
+				height: 46px;
+				border: 2px solid #A6E22E;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>暴力匹配算法</h1></center>
+				输入目标串 ：
+				<input type="text" id="targetStr"/> 
+				输入子串：
+				<input type="text" id="subStr"/> 
+				<input type="button" id="drawBtn" value="画板显示两串" />
+				<input type="button" id="searchBtn" value="开始" />
+			</div>
+			<div class="barGraph">
+				<div id="showDp">
+					<center id="showIndex"></center>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function init(){
+				var innerDiv=document.getElementById('showIndex');
+				var str='<ul class="tStr" id="tStr">';
+				for (var i = 0; i < 25; i++) {
+					str+='<li class="tLi" id="tLi_'+i+'" ></li>';
+				}
+				str+='</ul><ul class="sStr" id="sStr">';
+				for (var i = 0; i < 25; i++) {
+					str+='<li class="sLi" id="sLi_'+i+'" ></li>';
+				}
+				str+="</ul>";
+				innerDiv.innerHTML=str;
+			}
+			init();
+			
+			document.getElementById('drawBtn').onclick=function(){
+				init();
+				var targetStr=document.getElementById('targetStr').value;
+				var subStr=document.getElementById('subStr').value;
+				var tLi=document.getElementById('tStr').getElementsByTagName('li');
+				var sLi=document.getElementById('sStr').getElementsByTagName('li');
+				for (var i = 0; i < targetStr.length; i++) {
+					tLi[i].innerText=targetStr[i];
+					tLi[i].className='numLi';
+				}
+				for (var i = 0; i < subStr.length; i++) {
+					sLi[i].innerText=subStr[i];
+					sLi[i].className='numLi';
+				}
+			}
+			function initColor(arr){
+				for (var i = 0; i < arr.length; i++) {
+					arr[i].style.background='#708090';
+				}
+			}
+			
+			var begin=0;
+			document.getElementById('searchBtn').onclick=function(){
+				var targetStr=document.getElementById('targetStr').value;
+				var subStr=document.getElementById('subStr').value;
+				var tLi=document.getElementById('tStr').getElementsByTagName('li');
+				var sLi=document.getElementById('sStr').getElementsByTagName('li');
+				var k=0;
+				while(sLi[k].innerText=="")
+					k++;
+				var btn=true;
+				function compareStr(){
+					setTimeout(function(){
+						if(tLi[m].innerText==sLi[n].innerText){
+							tLi[m].style.background='orange';
+							sLi[n].style.background='orange';
+							m++;n++;
+						}else{
+							tLi[m].style.background='red';
+							sLi[n].style.background='red';
+							btn=false;
+							n=1;
+							m=m-n+1;
+						}
+						ctn++;
+					},1000*ctn);
+				}
+				var i=0,m=0,n=0,k=0;
+				function moveBack(arr,x){
+					var i=0;
+					while(arr[i].innerText=="")
+						i++;
+					last=i+x.length-1;
+					for(var j=last ; j>=i ; j-- ){
+						arr[j+1].innerText=arr[j].innerText;
+						arr[j+1].className='numLi';
+					}
+					arr[i].innerText="";
+					arr[i].className="sLi";
+				}
+				var timer=setInterval(function(){
+					if(tLi[m].innerText==sLi[n].innerText){
+							tLi[m].style.background='orange';
+							sLi[n].style.background='orange';
+							m++;n++;
+					}else{
+						tLi[m].style.background='red';
+						sLi[n].style.background='red';
+						setTimeout(function(){
+							moveBack(sLi,subStr);
+							initColor(tLi);
+							initColor(sLi);
+						},500);
+						k++;
+						n=k;
+						m=k;
+					}
+					if(m-k==targetStr.length || n-k==subStr.length){
+						clearInterval(timer);
+					}
+					
+				},1000);
+				
+			}
+		</script>
+	</body>
+</html>
