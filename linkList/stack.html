@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>创建链表</title>
+		<script type="text/javascript" src="../../js/jquery-3.3.1.min.js" ></script>
+		<style>
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1200px;
+				height:550px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1200;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 16px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1100px;
+				height: 400px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+				position: relative;
+			}
+			
+			#randNum{
+				width: 361px;
+				margin: auto;
+				height: 40px;
+				float: left;
+				margin-left: 200px;
+			}
+			#allBar li{
+				float: left;
+				width: 40px;
+				height: 40px;
+				list-style: none;
+				margin-left: 15px;
+				background: #E7E5DC;
+				line-height: 30px;
+				text-align: center;
+				font-size: 16px;
+				position: absolute;
+			}
+			#showDp{
+				width: 44px;
+				margin: auto;
+				height: 294px;
+				float: left;
+				margin-top: 62px;
+			}
+			#allNode .barLi{
+				
+				float: left;
+				width: 50px;
+				height: 35px;
+				list-style: none;
+				background: #E7E5DC;
+				line-height: 35px;
+				text-align: center;
+				font-size: 18px;
+			}
+			#allNode .lineLi{
+				float: left;
+				width: 50px;
+				height: 35px;
+				list-style: none;
+				text-align: center;
+				transition:  0.5s;
+				-moz-transition: 0.5s; /* Firefox 4 */
+				-webkit-transition:0.5s; /* Safari 和 Chrome */ 
+				-o-transition: 0.5s; /* Opera */
+			}
+			#valueArr{
+				width: 250px;
+				height: 120px;
+				float: left;
+				background: orange;
+				margin-left: 15px;
+				margin-top: 62px;
+				display: none;
+			}
+			#valueArr h3{
+				color: wheat;
+			}
+			.sli{
+				list-style: none;
+				width: 40px;
+				height: 40px;
+				float: left;
+				text-align: center;
+				line-height: 40px;
+				color: white;
+				font-size: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>动态实现栈</h1></center>
+				<input type="button" id="getNum" value="随机产生6个数" />
+				<input type="button" id="createStack" value="创建栈" />
+				<input type="button" id="inStack" value="入栈" />
+				<input type="button" id="outStack" value="出栈" />
+			</div>
+			<div class="barGraph">
+				
+				<div id="randNum">
+					<ul id="allBar">
+					</ul>
+				</div>
+				<div id="showDp">
+					<ul id="allNode">
+					</ul>
+				</div>
+				<div id="valueArr">
+					<div id="explainDiv"><h3>栈内数组：</h2></div>
+					<div id="stackValueDiv">
+						<ul id="stackValueLi">
+							<li class="sli" id="sli_0">3</li>
+							<li class="sli" id="sli_1"></li>
+							<li class="sli" id="sli_2"></li>
+							<li class="sli" id="sli_3"></li>
+							<li class="sli" id="sli_3"></li>
+							<li class="sli" id="sli_4"></li>
+						</ul>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+	
+		
+			var bar=document.getElementById('allBar');
+			var arr=null;
+			var allNode=document.getElementById('allNode');
+			var sLi=document.getElementById('stackValueLi').getElementsByTagName('li');
+			var m=0;
+			document.getElementById('getNum').onclick=function(){
+				bar.innerHTML='';
+				
+				for (var i = 0; i < 6; i++) {
+					var randX=parseInt(Math.random()*100);
+					$('#showDp').css('border-top','none');
+					var strHtml='<li class="barLi" id="bar_'+i+'" style="left:'+(60*i+80)+'px;top:20px;">'
+					+randX+'</li>';
+					bar.innerHTML += strHtml;
+				}
+				arr=bar.getElementsByTagName("li");
+				m=arr.length;
+				
+				$('#valueArr').css('display','block');
+				for (var i = 0; i < sLi.length; i++) {
+					sLi[i].innerText='';
+				}
+			}
+			
+			
+			document.getElementById('createStack').onclick=function(){
+				$('#showDp').css('border','2px solid black');
+				$('#showDp').css('border-top','none');
+				$('#valueArr').css('display','block');
+				for (var i = 0; i < sLi.length; i++) {
+					sLi[i].innerText='';
+				}
+			}
+			
+			
+			document.getElementById('inStack').onclick=function(){
+				m--;
+				var s=arr[m].style.left;
+				s.replace('px','');
+				var leftVal=parseInt(s);
+				arr[m].style.background='orange';
+				var btn=false;
+				var timer1=setInterval(function(){
+					if(arr[m].style.left=='550px'){
+						clearInterval(timer1);
+						btn=true;
+					}else{
+						leftVal+=10;
+						arr[m].style.left=leftVal+'px';
+					}
+				},60);
+				
+				var timer2=setInterval(function(){
+					if(btn==true){
+						console.log('jj');
+						var tv=310-(arr.length-m-1)*50;
+						var ss=arr[m].style.top;
+						ss.replace('px','');
+						var toptVal=parseInt(ss);
+						clearInterval(timer2);
+						var timer3=setInterval(function(){
+							if(arr[m].style.top==tv+'px'){
+								clearInterval(timer3);
+								sLi[arr.length-m-1].innerText=arr[m].innerText;
+							}else{
+								toptVal+=10;
+								arr[m].style.top=toptVal+'px';
+							}
+						},60);
+					}
+				},60)
+				
+			}
+			
+			document.getElementById('outStack').onclick=function(){
+				var ss=arr[m].style.top;
+				arr[m].style.background='#E7E5DC';
+				ss.replace('px','');
+				var toptVal=parseInt(ss);
+				var timer4=setInterval(function(){
+					if(arr[m].style.top=='20px'){
+						clearInterval(timer4);
+						btn=true;
+					}else{
+						toptVal-=10;
+						arr[m].style.top=toptVal+'px';
+					}
+				},60);
+				var btn=false;
+				
+				var timer5=setInterval(function(){
+					if(btn==true){
+						clearInterval(timer5);
+						var s=arr[m].style.left;
+						s.replace('px','');
+						var leftVal=parseInt(s);
+						var lv=80+m*60;
+						var timer6=setInterval(function(){
+							if(arr[m].style.left==lv+'px'){
+								clearInterval(timer6);
+								sLi[arr.length-m-1].innerText='';
+								m++;
+							}else{
+								leftVal-=10;
+								arr[m].style.left=leftVal+'px';
+							}
+						},60);
+						
+					}
+				},60);
+				
+			}
+			
+			
+		</script>
+	</body>
+</html>
