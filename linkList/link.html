@@ -73,13 +73,10 @@
 			}
 			#allNode .lineLi{
 				float: left;
-				width: 40px;
-				border: 4px;
-				height: 4px;
+				width: 50px;
+				height: 35px;
 				list-style: none;
-				background: #E7E5DC;
 				text-align: center;
-				margin-top: 16px;
 				transition:  0.5s;
 				-moz-transition: 0.5s; /* Firefox 4 */
 				-webkit-transition:0.5s; /* Safari 和 Chrome */ 
@@ -91,7 +88,7 @@
 		<div class="showView">
 			<div class="menu">
 				<center><h1>动态实现创建链表</h1></center>
-				<input type="button" id="getNum" value="随机产生8个数" />
+				<input type="button" id="getNum" value="随机产生6个数" />
 				<input type="button" id="createL" value="创建链表" />
 				<input type="button" id="insertNode" value="插入某一节点" />
 				<input type="button" id="deleteNode" value="删除某一结点" />
@@ -141,17 +138,47 @@
 					}
 					arr[i].style.background='orange';
 					var strHtml2='<li class="lineLi" id="lines_'+(arr.length-i)+'" style="left:'
-					+(60*(i+1))+'px;"></li>';
+					+(60*(i+1))+'px;"><canvas id="canvas_'+i+'" width="50" height="35"></canvas></li>';
 					var strHtml1='<li class="barLi" id="bars_'+(arr.length-i)+'" style="left:'+(60*i)+'px;">'
 					+arr[i].innerText+'</li>';
 					str=strHtml2+strHtml1+str;
 					allNode.innerHTML = headNode+str;
+					
+					var it=0;
+					for (var j=0 ; j<i ; j++) {
+						var c = document.getElementById("canvas_"+j);
+						var cxt = c.getContext("2d");
+						cxt.beginPath();
+						cxt.lineWidth = 10;
+						cxt.strokeStyle = 'rgba(29,130,254,0.9)';
+						cxt.moveTo(0,17.5);
+						cxt.lineTo(50,17.5);
+						cxt.closePath();  
+						cxt.stroke();
+					}
+					
+					var timer=setInterval(function(){
+						var c = document.getElementById("canvas_"+i);
+						var cxt = c.getContext("2d");
+						cxt.beginPath();
+						cxt.lineWidth = 10;
+						cxt.strokeStyle = 'rgba(29,130,254,0.9)';
+						cxt.moveTo(5*it,17.5);
+						cxt.lineTo(5*(it+1),17.5);
+						cxt.closePath();  
+						cxt.stroke();
+						if(5*(it+1)==50){
+							clearInterval(timer);
+						}
+						it++;
+					},80);
+					
 					if(i==arr.length-1)
 						setTimeout(function(){
 							arr[i].style.background='#E7E5DC';
-						},1000);
+						},1100);
 						
-				},i*1000);
+				},i*1100);
 				
 			}
 			document.getElementById('createL').onclick=function(){
@@ -190,7 +217,7 @@
 				}
 				oDiv.innerHTML=oHead+oStr+oEnd;	
 			}
-			
+			var uuid=10000000;
 			document.getElementById('insertNode').onclick=function(){
 				var rNum=parseInt(Math.random()*100);
 				showOperation(rNum);
@@ -199,8 +226,23 @@
 					var xarr=xbar.getElementsByTagName("li");
 					var index=$('#inSelect option:selected').val();
 					var rr=$('#randVal').text();
-					$("#allNode .barLi").eq(index-1).after('<li class="lineLi"></li><li class="barLi">'+rr+'</li>');
-					$("#allNode .barLi").eq(index).css('background','orange').css('color','white');
+					$("#allNode .barLi").eq(index-1).after('<li class="lineLi"><canvas id="myCanvas_'+uuid+'" width="50" height="35"></canvas></li><li class="barLi">'+rr+'</li>');
+					var uuit=0;
+					var timer=setInterval(function(){
+						var c = document.getElementById("myCanvas_"+uuid);
+						var cxt = c.getContext("2d");
+						cxt.beginPath();
+						cxt.lineWidth = 10;
+						cxt.strokeStyle = 'rgba(29,130,254,0.9)';
+						cxt.moveTo(5*uuit,17.5);
+						cxt.lineTo(5*(uuit+1),17.5);
+						cxt.closePath();  
+						cxt.stroke();
+						if(5*(uuit+1)==50){
+							clearInterval(timer);
+						}
+						uuit++;
+					},80);
 					setTimeout(function () {   
 				        $("#allNode .barLi").eq(index).css('background','#E7E5DC').css('color','black');  
 				    }, 1000);  
@@ -221,10 +263,13 @@
 					var index=$('#inSelect option:selected').val();
 					$("#allNode .barLi").eq(index).css('background','orange').css('color','white');
 					setTimeout(function () {   
-				        $("#allNode .barLi:eq("+index+")").remove();
-						$("#allNode .lineLi:eq("+index+")").remove();
+						$("#allNode .lineLi:eq("+(index-1)+")").html('<li class="lineLi"></li>');
+						setTimeout(function(){
+							$("#allNode .lineLi:eq("+(index-1)+")").remove();
+							 $("#allNode .barLi:eq("+index+")").remove();
+						},800);
 						$('#inSelect option:last').remove();
-				    }, 1000);  
+				    }, 800);  
 					
 				}
 			}
