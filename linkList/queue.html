@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>创建链表</title>
-		<script type="text/javascript" src="https://gqxing.github.io/data_structure/js/jquery-3.3.1.min.js" ></script>
+		<script type="text/javascript" src="../../js/jquery-3.3.1.min.js" ></script>
 		<style>
 			*{
 				margin: 0px;
@@ -167,6 +167,7 @@
 				}
 				arr=bar.getElementsByTagName("li");
 				m=arr.length;
+				rear=m-1;
 			}
 			
 			
@@ -222,18 +223,18 @@
 			}
 			
 			document.getElementById('outStack').onclick=function(){
-				var ss=arr[m].style.top;
-				arr[m].style.background='#E7E5DC';
+				var ss=arr[rear].style.top;
+				arr[rear].style.background='#E7E5DC';
 				ss.replace('px','');
 				var toptVal=parseInt(ss);
 				var btn=false;
 				var timer4=setInterval(function(){
-					if(arr[m].style.top=='360px'){
+					if(arr[rear].style.top=='360px'){
 						clearInterval(timer4);
 						btn=true;
 					}else{
 						toptVal+=10;
-						arr[m].style.top=toptVal+'px';
+						arr[rear].style.top=toptVal+'px';
 					}
 				},60);
 				
@@ -241,18 +242,19 @@
 				var timer5=setInterval(function(){
 					if(btn==true){
 						clearInterval(timer5);
-						var s=arr[m].style.left;
+						var s=arr[rear].style.left;
 						s.replace('px','');
 						var leftVal=parseInt(s);
-						var lv=80+rear*60;
+						var lv=80+(5-rear)*60;
 						var timer6=setInterval(function(){
-							if(arr[m].style.left==lv+'px'){
+							if(arr[rear].style.left==lv+'px'){
 								clearInterval(timer6);
-								sLi[arr.length-m-1].innerText='';
-								rear++;
+								sLi[arr.length-rear-1].innerText='';
+								rear--;
+								
 							}else{
 								leftVal-=10;
-								arr[m].style.left=leftVal+'px';
+								arr[rear].style.left=leftVal+'px';
 							}
 						},60);
 						
