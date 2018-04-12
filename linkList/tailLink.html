@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>创建链表</title>
+		<script type="text/javascript" src="../../js/jquery-3.3.1.min.js" ></script>
+		<style>
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1200px;
+				height:550px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1200;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 16px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1100px;
+				height: 400px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+			}
+			#operation{
+				width:250px;
+				margin: auto;
+				height: 60px;
+				padding-top: 15px;
+				padding-bottom: 15px;
+			}
+			#randNum{
+				width: 450px;
+				margin: auto;
+				height: 30px;
+			}
+			#allBar li{
+				float: left;
+				width: 40px;
+				height: 30px;
+				list-style: none;
+				margin-left: 15px;
+				background: #E7E5DC;
+				line-height: 30px;
+				text-align: center;
+				font-size: 16px;
+			}
+			#showDp{
+				width: 780px;
+				margin: auto;
+				height: 45px;
+				margin-top: 100px;
+			}
+			#allNode .barLi{
+				float: left;
+				width: 50px;
+				height: 35px;
+				list-style: none;
+				background: #E7E5DC;
+				line-height: 35px;
+				text-align: center;
+				font-size: 18px;
+			}
+			#allNode .lineLi{
+				float: left;
+				width: 50px;
+				height: 35px;
+				list-style: none;
+				text-align: center;
+				transition:  0.5s;
+				-moz-transition: 0.5s; /* Firefox 4 */
+				-webkit-transition:0.5s; /* Safari 和 Chrome */ 
+				-o-transition: 0.5s; /* Opera */
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>动态实现创建链表</h1></center>
+				<input type="button" id="getNum" value="随机产生8个数" />
+				<input type="button" id="createL" value="创建链表" />
+				<input type="button" id="insertNode" value="插入某一节点" />
+				<input type="button" id="deleteNode" value="删除某一结点" />
+			</div>
+			<div class="barGraph">
+				<div id="operation">
+					<div id="olDiv">
+						
+					</div>
+				</div>
+				<div id="randNum">
+					<ul id="allBar">
+					</ul>
+				</div>
+				<div id="showDp">
+					<ul id="allNode">
+					</ul>
+				</div>
+				
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+	
+		
+			var bar=document.getElementById('allBar');
+			var arr=bar.getElementsByTagName("li");
+			var allNode=document.getElementById('allNode');
+			
+			document.getElementById('getNum').onclick=function(){
+				bar.innerHTML='';
+				for (var i = 0; i < 6; i++) {
+					var randX=parseInt(Math.random()*100);
+					var strHtml='<li class="barLi" id="bar_'+i+'" style="left:'+(60*i+80)+'px;">'
+					+randX+'</li>';
+					bar.innerHTML += strHtml;
+				}
+			}
+			
+			var headNode='<li class="barLi" id="headNode">head</li>';
+			var str='';
+			function ONode(i){
+				str='';
+				setTimeout(function(){
+					for (var j = 0; j < arr.length; j++) {
+						arr[j].style.background='#E7E5DC';
+					}
+					arr[i].style.background='orange';
+					var strHtml2='<li class="lineLi" id="lines_'+i+'" style="left:'
+					+(60*(i+1))+'px;"><canvas id="canvas_'+i+'" width="50" height="35"></canvas></li>';
+					var strHtml1='<li class="barLi" id="bars_'+i+'" style="left:'+(60*i)+'px;">'
+					+arr[i].innerText+'</li>';
+					str=str+strHtml2+strHtml1;
+					allNode.innerHTML = headNode+str;
+					var it=0;
+					for (var j=0 ; j<i ; j++) {
+						var c = document.getElementById("canvas_"+j);
+						var cxt = c.getContext("2d");
+						cxt.beginPath();
+						cxt.lineWidth = 10;
+						cxt.strokeStyle = 'rgba(29,130,254,0.9)';
+						cxt.moveTo(0,17.5);
+						cxt.lineTo(50,17.5);
+						cxt.closePath();  
+						cxt.stroke();
+					}
+					
+					var timer=setInterval(function(){
+						var c = document.getElementById("canvas_"+i);
+						var cxt = c.getContext("2d");
+						cxt.beginPath();
+						cxt.lineWidth = 10;
+						cxt.strokeStyle = 'rgba(29,130,254,0.9)';
+						cxt.moveTo(5*it,17.5);
+						cxt.lineTo(5*(it+1),17.5);
+						cxt.closePath();  
+						cxt.stroke();
+						if(5*(it+1)==50){
+							clearInterval(timer);
+						}
+						it++;
+					},80);
+					
+					if(i==arr.length-1)
+						setTimeout(function(){
+							
+							arr[i].style.background='#E7E5DC';
+						},1000);
+						
+				},i*1000);
+				
+			}
+			document.getElementById('createL').onclick=function(){
+				
+				for (var i = 0; i < 6; i++) {
+					ONode(i);
+				}
+				
+			}
+			
+			var oDiv=document.getElementById('olDiv');
+			function showOperation(x){
+				var nodeLi=allNode.getElementsByTagName("li");
+				var oHtml='	<input type="button" id="doIt" value="执行" />';
+				var n=nodeLi.length;
+				var m=parseInt(n/2);
+				var oHead='<span style="color:white"> 随机数：<label id="randVal">'+x+'</label>&nbsp; 插入位置：</span><select id="inSelect">';
+				var oEnd='</select>&nbsp;<input type="button" id="execute" value="执行"  />';
+				var oStr='';
+				for (var i = 1; i <= m; i++) {
+					oStr+='<option value ="'+i+'">'+i+'</option>';
+				}
+				oDiv.innerHTML=oHead+oStr+oEnd;		
+			}
+			
+			function ORemove(){
+				var nodeLi=allNode.getElementsByTagName("li");
+				var oHtml='	<input type="button" id="doIt" value="执行" />';
+				var n=nodeLi.length;
+				var m=parseInt(n/2);
+				var oHead=' <span style="color:white">删除位置：</span><select id="inSelect">';
+				var oEnd='</select>&nbsp;<input type="button" id="execute" value="执行"  />';
+				var oStr='';
+				for (var i = 1; i <= m; i++) {
+					oStr+='<option value ="'+i+'">'+i+'</option>';
+				}
+				oDiv.innerHTML=oHead+oStr+oEnd;	
+			}
+			
+			var uuid=10000000;
+			document.getElementById('insertNode').onclick=function(){
+				var rNum=parseInt(Math.random()*100);
+				showOperation(rNum);
+				document.getElementById('execute').onclick=function(){
+					var xbar=document.getElementById('allNode');
+					var xarr=xbar.getElementsByTagName("li");
+					var index=$('#inSelect option:selected').val();
+					var rr=$('#randVal').text();
+					$("#allNode .barLi").eq(index-1).after('<li class="lineLi"><canvas id="myCanvas_'+uuid+'" width="50" height="35"></canvas></li><li class="barLi">'+rr+'</li>');
+					var uuit=0;
+					var timer=setInterval(function(){
+						var c = document.getElementById("myCanvas_"+uuid);
+						var cxt = c.getContext("2d");
+						cxt.beginPath();
+						cxt.lineWidth = 10;
+						cxt.strokeStyle = 'rgba(29,130,254,0.9)';
+						cxt.moveTo(5*uuit,17.5);
+						cxt.lineTo(5*(uuit+1),17.5);
+						cxt.closePath();  
+						cxt.stroke();
+						if(5*(uuit+1)==50){
+							clearInterval(timer);
+						}
+						uuit++;
+					},80);
+					setTimeout(function () {   
+				        $("#allNode .barLi").eq(index).css('background','#E7E5DC').css('color','black');  
+				    }, 1000);  
+				}
+			}
+			
+			function option(){
+				var nodeLi=allNode.getElementsByTagName("li");
+				var n=nodeLi.length;
+				var m=parseInt(n/2);
+				for (var i = 1; i <= m; i++) {
+					oStr+='<option value ="'+i+'">'+i+'</option>';
+				}
+			}
+			document.getElementById('deleteNode').onclick=function(){
+				ORemove();
+				document.getElementById('execute').onclick=function(){
+					var index=$('#inSelect option:selected').val();
+					$("#allNode .barLi").eq(index).css('background','orange').css('color','white');
+					setTimeout(function () {   
+						$("#allNode .lineLi:eq("+(index-1)+")").html('<li class="lineLi"></li>');
+						setTimeout(function(){
+							$("#allNode .lineLi:eq("+(index-1)+")").remove();
+							 $("#allNode .barLi:eq("+index+")").remove();
+						},800);
+						$('#inSelect option:last').remove();
+				    }, 800);  
+					
+				}
+			}
+			
+			
+		</script>
+	</body>
+</html>
