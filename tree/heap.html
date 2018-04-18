@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>二分查找</title>
+		<style>
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1300px;
+				height:560px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1400;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 16px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1286px;
+				height: 420px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+    			margin-top: 10px;
+    			padding-top: 10px;
+
+			}
+			#operation{
+				width:250px;
+				margin: auto;
+				height: 30px;
+				padding-bottom: 15px;
+			}
+			#randNum{
+				width: 400px;
+				margin: auto;
+				height: 30px;
+			}
+			#allBar li{
+				float: left;
+				width: 40px;
+				height: 30px;
+				list-style: none;
+				margin-left: 15px;
+				background: #E7E5DC;
+				line-height: 30px;
+				text-align: center;
+				font-size: 16px;
+			}
+			#showDp{
+				width: 1284px;
+				margin: auto;
+				height: 245px;
+				margin-top: 10px;
+			}
+			
+			#showIndex{
+				color: white;
+				font-size: 22px;
+				width: 1284px;
+				height: 245px;
+				border: 1px black solid;
+			}
+			
+			.ulClass{
+				height: 40px;
+				width: 1280px;
+			}
+			.numLi{
+				height: 40px;
+				width: 40px;
+				float: left;
+				list-style: none;
+				text-align: center;
+				line-height: 40px;
+			}
+			.lineLi{
+				list-style: none;
+				height: 40px;
+				float: left;
+			}
+			#sortRst{
+				margin-top: 10px;
+				color: white;
+				width: 1280px;
+				height: 50px;
+			}
+			#numPanel{
+				width: 420px;
+				height: 40px;
+				margin: auto;
+			}
+			.sortLi{
+				width: 60px;
+				height: 40px;
+				float: left;
+				list-style: none;
+				color: white;
+				font-size: 30px;
+				font-weight: bold;
+				text-align: center;
+				line-height: 40px;
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>动态展现堆</h1></center>
+				<input type="button" id="getNum" value="随机产生7个数" />
+				<input type="button" id="createTree" value="数组映射到树上" />
+				<input type="button" id="createHeap" value="创建初试堆" />
+				<input type="button" id="heapSort" value="堆排序" /> 
+			</div>
+			<div class="barGraph">
+				<div id="randNum">
+					<ul id="allBar">
+					</ul>
+				</div>
+				
+				<div id="showDp">
+					<center id="showIndex"></center>
+				</div>
+				
+				<div id="sortRst">
+					<center id="numPanel">
+						<li class="sortLi"></li>
+						<li class="sortLi"></li>
+						<li class="sortLi"></li>
+						<li class="sortLi"></li>
+						<li class="sortLi"></li>
+						<li class="sortLi"></li>
+						<li class="sortLi"></li>
+					</center>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var bar=document.getElementById('allBar');
+			
+			
+			function init(){
+				var innerDiv=document.getElementById('showIndex');
+				var str='';
+				for (var i = 0; i < 6; i++) {
+					str+='<ul class="ulClass" id="ul_'+i+'" >';
+					if(i%2==0){
+						for (var j = 0; j < 32; j++) {
+							str+='<li class="numLi" id="num_'+i+'_'+j+'"'+'></li>';
+						}
+					}else{
+						for (var k = 0; k < Math.pow(2,(i+1)/2); k++) {
+							var wd=1280/Math.pow(2,(i+1)/2)-2;
+							str+='<li class="lineLi" style="width:'+wd+'px" id="line_'+i+'_'+k+'"'+'>'+
+							'<canvas class="canvasList" id="canvas_'+i+'_'+k+'"'+' width="'+wd+'" height="40"></canvas>'
+							+'</li>';
+						}
+					}
+					str+='</ul>';
+				}
+				innerDiv.innerHTML=str;
+			}
+			init();	//初始化布局
+			var randNum=[0,0,0,0,0,0,0];
+			function generateRandum(){
+				bar.innerHTML='';
+				//为使数据表现的更加明显，对随机数做特殊处理
+				for (var i = 1; i < 8; i++){ 
+					randNum[i]=parseInt(Math.random()*99+1);
+					for(var j=i-1;j>=0;j--)
+						if(randNum[j]==randNum[i]){
+							i--;
+							break;
+						}
+				}
+				
+				for (var i = 0; i < 7; i++) {
+					var strHtml='<li class="barLi" id="bar_'+i+'" style="left:'+(60*i+80)+'px;">'
+					+randNum[i+1]+'</li>';
+					bar.innerHTML += strHtml;
+				}
+			}
+			
+			document.getElementById('getNum').onclick=function(){
+				generateRandum();
+			}
+			
+			
+			var pos=[0,15,7,23,3,11,19,27];
+			var lev=[0,0,2,2,4,4,4,4];
+			var line=[0,1,0,1,2,3];
+			//将数组打印到树上
+			function initTreePrint(){
+				var index=0;
+				for (var i = 0; i < 3; i++) {
+					var oLi=document.getElementById('ul_'+(i*2)).getElementsByTagName('li');
+					var oLine=document.getElementById('ul_'+(i*2+1)).getElementsByTagName('li');
+					for (var j = 0; j < Math.pow(2,i); j++) {
+						oLi[pos[index+1]].innerText=randNum[index+1];
+						oLi[pos[index+1]].style.border='1.5px solid white';
+						oLi[pos[index+1]].style.height='37px';
+						oLi[pos[index+1]].style.width='37px';
+						index++;
+						if(i<2){
+							var c = document.getElementById("canvas_"+(i*2+1)+"_"+2*j);
+							var cxt = c.getContext("2d");
+							cxt.beginPath();
+							var end=1280/Math.pow(2,i+1);
+							cxt.moveTo(end/2,40);
+							cxt.lineTo(end-40,0);
+							cxt.stroke();
+							var c = document.getElementById("canvas_"+(i*2+1)+"_"+(2*j+1));
+							var cxt = c.getContext("2d");
+							cxt.beginPath();
+							var end=1280/Math.pow(2,i+1);
+							cxt.moveTo(0,0);
+							cxt.lineTo(end/2,40);
+							cxt.stroke();
+						}
+					}
+				}
+			}
+			
+			document.getElementById('createTree').onclick=function(){
+				initTreePrint();
+			}
+			
+			//创建初试堆
+			//向下进行调整
+			function adjustDown(k,len){
+				setTimeout(function(){
+					if(k==1){
+						setTimeout(function(){
+							var oLi=document.getElementById('ul_'+lev[1]).getElementsByTagName('li');
+							oLi[pos[1]].style.background='#708090';
+						},1000)
+					}
+					for (var i = 1; i <= parseInt(len/2) ; i++) {
+						var oLi=document.getElementById('ul_'+lev[i]).getElementsByTagName('li');
+						oLi[pos[i]].style.background='#708090';
+					}
+					var oLi=document.getElementById('ul_'+lev[k]).getElementsByTagName('li');
+					oLi[pos[k]].style.background='orange';
+					randNum[0]=randNum[k];
+					for(var i=2*k;i<=len;i*=2){
+						if(i<len && randNum[i]<randNum[i+1])
+							i++;
+						if(randNum[0]>=randNum[i])	break;
+						else{
+							randNum[k]=randNum[i];
+							k=i;
+						}
+					}
+					randNum[k]=randNum[0];
+					initTreePrint();
+				},1000*(4-k));
+			}
+			
+			
+			
+			document.getElementById('createHeap').onclick=function(){
+				for (var i=3;i>0;i--) {
+					adjustDown(i,7);
+				}
+			}
+			
+			
+			function adjustDownSort(k,len){
+				randNum[0]=randNum[k];
+				for(var i=2*k;i<=len;i*=2){
+					if(i<len && randNum[i]<randNum[i+1])
+						i++;
+					if(randNum[0]>=randNum[i])	break;
+					else{
+						randNum[k]=randNum[i];
+						k=i;
+					}
+				}
+				randNum[k]=randNum[0];
+				initTreePrint();
+			}
+			
+			var sLi=document.getElementById('numPanel').getElementsByTagName('li');
+			var uIndex=0;
+			document.getElementById('heapSort').onclick=function(){
+				if(uIndex==7){
+					alert('请重新生成随机数！');
+					document.getElementById('heapSort').value='堆排序';
+					uIndex=0;
+					for (var i = 0; i < 7; i++) {
+						sLi[i].innerText='';
+					}
+					var oLi=document.getElementById('ul_0').getElementsByTagName('li');
+					oLi[pos[1]].innerText='';
+					return;
+				}else{
+					document.getElementById('heapSort').value='下一步';
+				}
+				for(var j=parseInt((randNum.length-1)/2);j>=0;j--){
+					adjustDownSort(j,randNum.length-1);
+				}
+				sLi[uIndex++].innerText=randNum[1];
+				for (var j= 7 ; j >= randNum.length ;j--  ) {
+					var oLi=document.getElementById('ul_'+lev[j]).getElementsByTagName('li');
+					oLi[pos[j]].innerText='';
+				}
+				randNum[1]=randNum[randNum.length-1];
+				randNum.splice(randNum.length-1,1);
+				
+				
+			}
+			
+		</script>
+	</body>
+</html>
