@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Prim算法</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1200px;
+				height:650px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1200;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 16px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1000px;
+				height: 500px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>动态展现Kruskal算法</h1></center>
+				<input type="button" id="getNum" value="随机生成六个点的图" />
+				<input type="button" id="primBtn" value="Kruskal算法" />
+			</div>
+			<div class="barGraph">
+				<canvas id="MapCanvas" width="1000" height="500"></canvas>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var section=function(node1,node2,value){
+				this.node1=node1;
+				this.node2=node2;
+				this.value=value;
+				}
+			var cos=[];
+			var edge=[];
+			var index=0;	//结构体索引
+			//生成边长
+			for (var i = 0; i < 10; i++){ 
+					cos[i]=parseInt(Math.random()*99+1);
+					for(var j=i-1;j>=0;j--)
+						if(cos[j]==cos[i]){
+							i--;
+							break;
+						}
+				}
+				
+			var canvas=document.getElementById("MapCanvas");
+			//定义6个小圆的x和y轴位置
+			var x=[500,250,330,670,750,500];
+			var y=[60,180,440,440,180,250];
+			//画图的轨迹的端点
+			var x1=[500,280,350,650,720,500];
+			var y1=[90,180,420,420,180,500];
+			//图的中间点对应的连线坐标
+			var x2=[500,470,480,520,530];
+			var y2=[220,250,270,270,250];
+			var cxt=canvas.getContext("2d");
+			document.getElementById('getNum').onclick=function(){
+				//画空心圆
+				for (var i = 0; i < 6 ; i++) {
+					cxt.beginPath();
+					cxt.arc(x[i],y[i],30,0,360,false);
+					cxt.lineWidth=3;
+					cxt.strokeStyle="#00A4FF";
+					cxt.stroke();//画空心圆
+					cxt.closePath();
+					cxt.fillStyle = "#000000";//颜色
+				　　 cxt.font = "normal 22px 微软雅黑";//字体
+				　　	cxt.textBaseline = "middle";//竖直对齐
+				　　	cxt.textAlign = "center";//水平对齐　
+				　　cxt.fillText("V"+(i+1), x[i], y[i], 30);//绘制文字
+				}
+				
+				//圈外围划线
+				for (var i = 0; i < 4; i++) {
+					cxt.beginPath();
+					cxt.lineWidth = 3;
+					cxt.strokeStyle = '#00A4FF';
+					cxt.moveTo(x1[i],y1[i]);
+					cxt.lineTo(x1[i+1],y1[i+1]);
+					cxt.closePath();  
+					cxt.stroke();
+					cxt.fillStyle = "#000000";//颜色
+					cxt.fillText(cos[i], (x[i]+x[i+1])/2, (y[i]+y[i+1])/2, 30);
+					var side=new section(i,i+1,cos[i]);
+					edge.push(side);
+				}
+				//0-4的那条直线与边
+				cxt.beginPath();
+				cxt.lineWidth = 3;
+				cxt.strokeStyle = '#00A4FF';
+				cxt.moveTo(x1[4],y1[4]);
+				cxt.lineTo(x1[0],y1[0]);
+				cxt.closePath();  
+				cxt.stroke();
+				cxt.fillStyle = "#000000";//颜色
+				cxt.fillText(cos[4], (x[4]+x[0])/2, (y[0]+y[4])/2, 30);
+				var side=new section(4,0,cos[4]);
+				edge.push(side);
+				
+				//圈内部划线
+				for (var i = 0; i < 5; i++) {
+					cxt.beginPath();
+					cxt.lineWidth = 3;
+					cxt.strokeStyle = '#00A4FF';
+					cxt.moveTo(x1[i],y1[i]);
+					cxt.lineTo(x2[i],y2[i]);
+					cxt.closePath();  
+					cxt.stroke();
+					cxt.fillStyle = "#000000";//颜色
+					cxt.fillText(cos[5+i], (x1[i]+x2[i])/2, (y1[i]+y2[i])/2, 30);
+					var side=new section(i,5,cos[5+i]);
+					edge.push(side);
+				}
+			}
+			
+			//按合并集的思路去结局问题
+			var tree=[];
+			function findRoot(x){
+				if(tree[x]==-1)
+					return x;
+				else{
+					var tmp=findRoot(tree[x]);
+					tree[x]=tmp;
+					return tmp;
+				}
+			}
+			
+			document.getElementById('primBtn').onclick=function(){
+				edge.sort(function(a,b){
+					return a.value>b.value;
+				})
+				var edgeIndex=0;
+				for(var i=0;i<6;i++){
+					tree.push(-1);
+				}
+				var timer=setInterval(function(){
+					var a=findRoot(edge[edgeIndex].node1);
+					var b=findRoot(edge[edgeIndex].node2);
+					if(a!=b){
+						tree[a]=b;
+						if(edge[edgeIndex].node1 == 5 || edge[edgeIndex].node2 ==5){
+							cxt.beginPath();
+							cxt.lineWidth = 3;
+							cxt.strokeStyle = 'orangered';
+							cxt.moveTo(x1[edge[edgeIndex].node1],y1[edge[edgeIndex].node1]);
+							cxt.lineTo(x2[edge[edgeIndex].node1],y2[edge[edgeIndex].node1]);
+							cxt.closePath();  
+							cxt.stroke();
+							cxt.fillStyle = "white";//颜色
+							cxt.fillText(edge[edgeIndex].value, 
+								(x1[edge[edgeIndex].node1]+x2[edge[edgeIndex].node1])/2, 
+								(y1[edge[edgeIndex].node1]+y2[edge[edgeIndex].node1])/2, 30);
+						}else{
+							cxt.beginPath();
+							cxt.lineWidth = 3;
+							cxt.strokeStyle = 'orangered';
+							cxt.moveTo(x1[edge[edgeIndex].node1],y1[edge[edgeIndex].node1]);
+							cxt.lineTo(x1[edge[edgeIndex].node2],y1[edge[edgeIndex].node2]);
+							cxt.closePath();  
+							cxt.stroke();
+							cxt.fillStyle = "white";//颜色
+							cxt.fillText(edge[edgeIndex].value,
+								(x[edge[edgeIndex].node1]+x[edge[edgeIndex].node2])/2,
+								(y[edge[edgeIndex].node1]+y[edge[edgeIndex].node2])/2, 30);
+						}
+					}else{
+						edgeIndex++;
+					}
+					
+					if(edgeIndex>5){
+						clearInterval(timer);
+					}
+					
+				},1000);
+				
+			}
+			
+			
+		</script>
+	</body>
+</html>
