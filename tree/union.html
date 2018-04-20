@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>并查集</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1200px;
+				height:750px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1200;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 16px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1000px;
+				height: 600px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+			}
+			.info{
+				height: 40px;
+			}
+			#eId{
+				height: 40px;
+				line-height: 40px;
+				color: wheat;
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>n个点的畅通工程</h1></center>
+				<input type="button" id="getNum" value="随机生成集合" />
+				<input type="button" id="unionBtn" value="执行" />
+			</div>
+			<div class="barGraph">
+				<div class="info">
+					<center id="eId">
+						<span>白色的点代表根结点，橙红色代表子结点</span>
+					</center>
+				</div>
+				<canvas id="MapCanvas" width="1000" height="550"></canvas>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var canvas=document.getElementById("MapCanvas");
+			var cxt=canvas.getContext("2d");
+			var section=function(node1,node2,value){
+				this.node1=node1;
+				this.node2=node2;
+			}
+			
+			//按合并集的思路去解决问题
+			var tree=[];
+			function findRoot(x){
+				if(tree[x]==-1)
+					return x;
+				else{
+					var tmp=findRoot(tree[x]);
+					tree[x]=tmp;
+					return tmp;
+				}
+			}
+			
+			var x=[];
+			var y=[];
+			var edge=[];
+			
+			
+			function drawDot(){
+				//生成x坐标
+				for (var i = 0; i < 8; i++){ 
+						x[i]=parseInt(Math.random()*800+100);
+						for(var j=i-1;j>=0;j--)
+							if(x[j]==x[i]){
+								i--;
+								break;
+							}
+					}
+				//生成y坐标
+				for (var i = 0; i < 8; i++){ 
+						y[i]=parseInt(Math.random()*400+50);
+						for(var j=i-1;j>=0;j--)
+							if(y[j]==y[i]){
+								i--;
+								break;
+							}
+					}
+				//绘出点来
+				for (var i = 0; i < 8; i++){ 
+						cxt.beginPath();
+						cxt.arc(x[i],y[i],3,0,360,false);
+						cxt.lineWidth=3;
+						cxt.strokeStyle="#00A4FF";
+						cxt.stroke();//画空心圆
+						cxt.closePath();
+						cxt.fillStyle = "#000000";//颜色
+					　　 cxt.font = "normal 16px 微软雅黑";//字体
+					　　	cxt.textBaseline = "middle";//竖直对齐
+					　　	cxt.textAlign = "center";//水平对齐　
+					　　	cxt.fillText('V'+i, x[i], y[i]-10, 30);//绘制文字
+				}
+			}
+			
+			//随机生成几条边
+			var m=8;	//m是随机生成的边数
+			document.getElementById('getNum').onclick=function(){
+				document.getElementById('eId').style.display='none';
+				edge=[];
+				cxt.clearRect(0,0,1000,1000);
+				drawDot();
+				while(m>5 || m<3){
+					m=parseInt(Math.random()*8);
+				}
+				var rs=[],count=0;
+				while(count<m){
+					var aNode=parseInt(Math.random()*8);
+					var bNode=parseInt(Math.random()*8);
+					while(aNode==bNode || (rs.indexOf(aNode)>0 && rs.indexOf(bNode)>0) ){
+						var aNode=parseInt(Math.random()*8);
+						var bNode=parseInt(Math.random()*8);
+					}
+					var side=new section(aNode,bNode);
+					cxt.beginPath();
+					cxt.lineWidth = 2;
+					cxt.strokeStyle = '#00A4FF';
+					cxt.moveTo(x[aNode],y[aNode]);
+					cxt.lineTo(x[bNode],y[bNode]);
+					cxt.closePath();  
+					cxt.stroke();
+					edge.push(side);
+					count++;
+				}
+			}
+				
+			
+			
+			
+			document.getElementById('unionBtn').onclick=function(){
+				document.getElementById('eId').style.display='block';
+				tree=[];
+				for (var i = 0; i < 8; i++) {
+					tree.push(-1);
+				}
+				var index=0;
+				while(index<edge.length){
+					var a=findRoot(edge[index].node1);
+					var b=findRoot(edge[index].node2);
+					if(a!=b){
+						tree[a]=b;
+					}
+					index++;
+				}
+				var aldot=0;	//扫描点
+				var timer=setInterval(function(){
+					if(tree[aldot]!=-1){
+						for (var i = 0; i < edge.length; i++) {
+							if(edge[i].node1 ==aldot ||  edge[i].node2 ==aldot ){
+								cxt.beginPath();
+								cxt.arc(x[edge[i].node1],y[edge[i].node1],3,0,360,false);
+								cxt.arc(x[edge[i].node2],y[edge[i].node2],3,0,360,false);
+								cxt.lineWidth=3;
+								cxt.strokeStyle="orange";
+								cxt.stroke();//画空心圆
+							}
+						}
+						
+						cxt.beginPath();
+						cxt.arc(x[tree[aldot]],y[tree[aldot]],3,0,360,false);
+						cxt.lineWidth=3;
+						cxt.strokeStyle="white";
+						cxt.stroke();//画空心圆
+					}
+					else{
+						cxt.beginPath();
+						cxt.arc(x[aldot],y[aldot],3,0,360,false);
+						cxt.lineWidth=3;
+						cxt.strokeStyle="white";
+						cxt.stroke();//画空心圆
+					}
+					
+					aldot++;
+					if(aldot>=8){
+						clearInterval(timer);
+					}
+				},1000);
+			}
+			
+			
+		</script>
+	</body>
+</html>
