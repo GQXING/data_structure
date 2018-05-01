@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>选择排序</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 950px;
+				height:460px;
+				margin: auto;
+				background: #E7E5DC;
+				padding: 10px;
+			}
+			.menu{
+				width: 900px;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 10px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 900px;
+				height: 350px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+			}
+			#allBar{
+				padding-left: 100px;
+			}
+			#allBar li{
+				float: left;  
+                position: absolute;  
+                bottom: 0px;
+                list-style: none;
+                background: olivedrab;
+                width: 40px;
+                transition:  0.5s;
+                text-align: center;
+				-moz-transition: 0.5s; /* Firefox 4 */
+				-webkit-transition:0.5s; /* Safari 和 Chrome */ 
+				-o-transition: 0.5s; /* Opera */
+			}
+			.returnBack a{
+				color: black;
+				text-decoration: none;
+			}
+			#return_part{
+				width: 970px;
+				height: 25px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.barGraph h2{
+				color: white;
+				height: 40px;
+				text-align: center;
+				line-height: 40px;
+				font-size: 18px;
+				display: none;
+			}
+			.barGraph #shell_info{
+				color: orangered;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="return_part"><span class="returnBack">>> <a href="">返回</a></span></div>
+		<div class="showView" id="">
+			
+			<div class="menu">
+				<center><h1>动态实现希尔排序</h1></center>
+				<input type="button" id="getNum" value="随机产生10组" />
+				<input type="button" id="deleteLeft" value="左边删除一组" />
+				<input type="button" id="deleteRight" value="右边删除一组" />
+				<input type="button" id="sortBar" value="执行" />
+			</div>
+			<div class="barGraph">
+				<h2 id="info">第一步：dk=<span id="shell_info">5</span></h2>
+				<ul id="allBar"></ul>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var static_dk=5;
+			//获取class类选择器
+			function getClassName(parent, cls) {
+			    var all = parent.getElementsByTagName("*");
+			    var all = [];
+			    for (var i = 0; i < all.length; i++) {
+			        if (all[i].className == cls) {
+			            all.push(all[i]);
+			        }
+			    }
+			    return all;
+			}
+			
+			var bar=document.getElementById('allBar');
+			var oInfo=document.getElementById("info");
+			//随机产生10组数据
+			document.getElementById('getNum').onclick=function(){
+				bar.innerHTML='';
+				for (var i = 0; i < 10; i++) {
+					var randX=parseInt(Math.random()*80+20);
+					var strHtml='<li class="barLi" id="bar_'+i+'" style="height:' 
+					+ randX*3 + 'px;left:'+(60*i+160)+'px;">'+randX+'</li>';
+					bar.innerHTML += strHtml;
+				}
+				oInfo.style.display='block';
+				static_dk=5;
+				document.getElementById('shell_info').innerText=static_dk;
+			}
+			//左侧删除一组数据
+			document.getElementById('deleteLeft').onclick=function(){
+				var length=bar.childNodes.length;
+				if( length>1 )
+					bar.removeChild(bar.childNodes[0]);
+				else
+					alert("你已经将数据全部删除了，请重新生成数据。");
+			}
+			//右侧删除一组数据
+			document.getElementById('deleteRight').onclick=function(){
+				var length=bar.childNodes.length;
+				if( length>1 )
+					bar.removeChild(bar.childNodes[length-1]);
+				else
+					alert("你已经将数据全部删除了，请重新生成数据。");
+			}
+			
+			//排序效果
+			document.getElementById('sortBar').onclick=function(){
+				var n=bar.childNodes.length;
+				if(n==0){
+					alert("请先生成一组数字！");
+					return;
+				}
+				var all = bar.getElementsByTagName("*");
+				
+				function insertSort(i,dk){
+					setTimeout(function(){
+						for(var j=0;j<n;j++)
+							all[j].style.background='olivedrab';
+						if(i<n){
+							all[i].style.background='orange';
+							if(parseInt(all[i].innerText)<parseInt(all[i-dk].innerText)){
+								var temp=parseInt(all[i].innerText);
+								for(var j=i-dk; j>=0 && temp<parseInt(all[j].innerText);j-=dk)
+								{
+									all[j+dk].innerText=all[j].innerText
+									all[j+dk].style.height=parseInt(all[j].innerText)*3+'px';
+								}
+								all[j+dk].style.background='orange';
+								all[j+dk].innerText=temp;
+								all[j+dk].style.height=temp*3+'px';
+							}
+						}else{
+							static_dk=parseInt(static_dk/2);
+							document.getElementById('shell_info').innerText=static_dk;
+						}
+					},1200*(i-dk));
+				}
+				
+				function dkFunction(dk){
+					for (var i = dk; i <= n; i++) {
+						insertSort(i,dk)
+					}
+				}
+				if(static_dk==0){
+					alert("排序已完成，请重新在生成10组随机数！")
+				}
+				dkFunction(static_dk);
+			}
+		</script>
+	</body>
+</html>

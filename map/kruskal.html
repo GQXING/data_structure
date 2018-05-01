@@ -10,7 +10,7 @@
 			}
 			.showView{
 				width: 1200px;
-				height:650px;
+				height:620px;
 				margin: auto;
 				background: #E7E5DC;
 			}
@@ -53,15 +53,7 @@
 			var cos=[];
 			var edge=[];
 			var index=0;	//结构体索引
-			//生成边长
-			for (var i = 0; i < 10; i++){ 
-					cos[i]=parseInt(Math.random()*99+1);
-					for(var j=i-1;j>=0;j--)
-						if(cos[j]==cos[i]){
-							i--;
-							break;
-						}
-				}
+			
 				
 			var canvas=document.getElementById("MapCanvas");
 			//定义6个小圆的x和y轴位置
@@ -75,6 +67,17 @@
 			var y2=[220,250,270,270,250];
 			var cxt=canvas.getContext("2d");
 			document.getElementById('getNum').onclick=function(){
+				//清空画布
+				canvas.height=canvas.height;
+				//生成边长
+				for (var i = 0; i < 10; i++){ 
+						cos[i]=parseInt(Math.random()*99+1);
+						for(var j=i-1;j>=0;j--)
+							if(cos[j]==cos[i]){
+								i--;
+								break;
+							}
+					}
 				//画空心圆
 				for (var i = 0; i < 6 ; i++) {
 					cxt.beginPath();
@@ -89,7 +92,7 @@
 				　　	cxt.textAlign = "center";//水平对齐　
 				　　cxt.fillText("V"+(i+1), x[i], y[i], 30);//绘制文字
 				}
-				
+				edge=[];
 				//圈外围划线
 				for (var i = 0; i < 4; i++) {
 					cxt.beginPath();

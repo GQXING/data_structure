@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>合并排序</title>
+		<style type="text/css">
+			*{
+				margin: 0px;
+				padding: 0px;
+			}
+			.showView{
+				width: 1200px;
+				height:550px;
+				margin: auto;
+				background: #E7E5DC;
+			}
+			.menu{
+				width: 1200;
+				height: 90px;
+				text-align: center;
+				vertical-align:sub;
+			}
+			.menu input{
+				margin-top: 16px;
+				padding: 3px;
+			}
+			.barGraph{
+				width: 1200px;
+				height: 400px;
+				margin: auto;
+				background: #708090;
+				position: relative;
+			}
+			.cBar{
+				width: 1120px;
+				height: 60px;
+				padding-top: 20px;
+				margin-left: 33px;
+			}
+			.cBar li{
+				height: 60px;
+                width: 60px;
+                float: left;
+                background: white;
+                list-style: none;
+                margin-left: 10px;
+                transition:  0.5s;
+				-moz-transition: 0.5s; /* Firefox 4 */
+				-webkit-transition:0.5s; /* Safari 和 Chrome */ 
+				-o-transition: 0.5s; /* Opera */
+			}
+			#info{
+				width: 1120px;
+				height: 50px;
+				color: white;
+				margin: auto;
+			}
+			#indexBar li{
+				background: #708090;
+				text-align: center;
+				line-height: 60px;
+				color: white;
+				font-size: 18px;
+			}
+			#iBar li{
+				background: #708090;
+				text-align: center;
+				line-height: 60px;
+				color: white;
+				font-size: 18px;
+			}
+			#introduceDiv{
+				width: 1120px;
+				height: 50px;
+				color: white;
+				margin: auto;
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="showView">
+			<div class="menu">
+				<center><h1>荷兰国旗问题</h1></center>
+				<input type="button" id="getNum" value="随机产生16组" />
+				<input type="button" id="sortBar" value="执行" />
+			</div>
+			<div class="barGraph">
+				<div id="info">描述:荷兰国旗有三横条块构成，自上到下的三条块颜色依次为红、白、蓝。
+					现有若干由红、白、蓝三种颜色的条块序列，要将它们重新排列使所有相同颜色的条块在一起。
+					本问题要求将所有红色的条块放最左边、所有白色的条块放中间、所有蓝色的条块放最右边</div>
+				<ul id="allBar" class="cBar"></ul>
+				<ul id="indexBar" class="cBar"></ul>
+				<ul id="iBar" class="cBar"></ul>
+				<div id="introduceDiv">算法描述：i为工作指针，j以前的表示全为红色，k以后的全为蓝色，根据i扫描的颜色，
+				决定将其交换到序列的前部或者尾部。
+					如果i扫描的颜色是红色，则与当前j所在的位置交换颜色，同时i++，j++；
+					如果扫描到白色，则只需i++;如果是蓝色，则i与k对应的颜色交换，同时k--.</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+		
+			//获取class类选择器
+			function getClassName(parent, cls) {
+			    var all = parent.getElementsByTagName("*");
+			    var all = [];
+			    for (var i = 0; i < all.length; i++) {
+			        if (all[i].className == cls) {
+			            all.push(all[i]);
+			        }
+			    }
+			    return all;
+			}
+			var ci=0,cj=0,ck=15;
+			
+			var bar=document.getElementById('allBar');
+			var indexBar=document.getElementById('indexBar');
+			var iBar=document.getElementById('iBar');
+			//随机产生16组数据
+			document.getElementById('getNum').onclick=function(){
+				bar.innerHTML='';
+				indexBar.innerHTML='';
+				iBar.innerHTML='';
+				for (var i = 0; i < 16; i++) {
+					var randX=Math.random()*3;
+					var cli='';
+					if(randX<1){
+						cli='red';
+					}else if(randX<2){
+						cli='white';
+					}else{
+						cli='blue';
+					}
+					var strHtml='<li class="barLi" id="bar_'+i+'" style="background:'+cli+'"></li>';
+					if(i==0){
+						var str='<li class="barLi" id="inbar_'+i+'">j=0</li>';
+						var str2='<li class="barLi" id="ibar_'+i+'">i=0</li>';
+					}else if(i==15){
+						var str='<li class="barLi" id="inbar_'+i+'">k=15</li>';
+						str2='<li class="barLi" id="ibar_'+i+'"></li>';
+					}else{
+						var str='<li class="barLi" id="inbar_'+i+'"></li>';
+						str2='<li class="barLi" id="ibar_'+i+'"></li>';
+					}
+					
+					bar.innerHTML += strHtml;
+					indexBar.innerHTML+=str;
+					iBar.innerHTML+=str2;
+					ci=0;cj=0;ck=15;
+					document.getElementById('introduceDiv').style.display='block';
+				}
+			}
+			
+			
+			
+			//排序效果
+			document.getElementById('sortBar').onclick=function(){
+				var n=bar.childNodes.length;
+				var all = bar.getElementsByTagName("*");
+				var arr1=indexBar.getElementsByTagName('*');
+				var arr2=iBar.getElementsByTagName('*');
+				if(n==0){
+					alert("请先生成一组数字！");
+					return;
+				}
+				function swap(i,j){
+					var temp=all[i].style.background;
+					all[i].style.background=all[j].style.background;
+					all[j].style.background=temp;
+				}
+				var timer=setInterval(function(){
+					switch(all[ci].style.background){
+						case 'red':swap(cj,ci);
+									ci++;cj++;
+									for (var i = 0; i < arr1.length ; i++) {
+										arr2[i].innerText='';
+										if(i==ck) continue;
+										arr1[i].innerText='';
+									}
+									arr1[cj].innerText="j="+cj;
+									arr2[ci].innerText="i="+ci;
+									break;
+						case 'white':ci++;
+									for (var i = 0; i < arr1.length ; i++) {
+										arr2[i].innerText='';
+									}
+									 arr2[ci].innerText="i="+ci;
+									 break;
+						case 'blue':swap(ck,ci);
+									ck--;
+									for (var i = 0; i < arr1.length ; i++) {
+										if(i==cj) continue;
+										arr1[i].innerText='';
+									}
+									arr1[ck].innerText="k="+ck;
+									break;
+					}
+					
+					if(ci>ck){
+						clearInterval(timer);
+					}
+				},1600);
+				
+			}
+		</script>
+	</body>
+</html>
